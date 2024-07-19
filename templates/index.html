@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChefAI</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #FFFFFF;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        input, button {
+            width: 97%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #6200ea;
+            color: #ffffff;
+            cursor: pointer;
+            width: 30%;
+        }
+        button:hover {
+            background-color: #3700b3;
+        }
+        pre {
+            background-color: #2e2e2e;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-x: auto;
+            margin-top: 20px;
+            font-size: 16px;
+            line-height: 1.5;
+            display: none; /* Hide by default */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ChefAI🧆</h1>
+        <h4><i>Where Your Ingredients Meet Culinary Creativity...</i></h4>
+        <input type="text" id="prompt" placeholder="Enter something like - Give a vegan recipe using Tomato and Mushrooms only">
+        <button onclick="generateRecipe()">Generate Recipe</button>
+        <pre id="recipe"></pre>
+    </div>
+    <script>
+        async function generateRecipe() {
+            const prompt = document.getElementById('prompt').value;
+            const recipeElement = document.getElementById('recipe');
+            recipeElement.textContent = 'Generating recipe...';
+            recipeElement.style.display = 'none'; 
+            try {
+                const response = await fetch('/generate_recipe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ prompt })
+                });
+                const data = await response.json();
+                if (data.recipe && data.recipe.trim()) {
+                    recipeElement.textContent = data.recipe;
+                    recipeElement.style.display = 'block'; 
+                } else {
+                    recipeElement.textContent = 'No recipe found. Please try again with different ingredients.';
+                    recipeElement.style.display = 'block'; 
+                }
+            } catch (error) {
+                recipeElement.textContent = 'An error occurred while generating the recipe. Please try again.';
+                recipeElement.style.display = 'block'; 
+            }
+        }
+    </script>
+</body>
+</html>
